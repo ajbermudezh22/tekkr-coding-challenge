@@ -55,7 +55,7 @@ Take the existing app and add the following features:
 - Add a visual AI Model selector in the chat homepage to allow switching between different models (eg. Gemini 2.5 Flash, GPT-5 mini) for the chat.
 
 ### Deliverables
-- The Deliverable: A Loom video (screen only is fine) showing:
+The Deliverable: A Loom video (screen only is fine) showing:
 - A 2-5 minute explanation of how you built your solution.
 - A link to your repository.
 - Note: It's not required to show your face. Share your screen, walk us through your code logic, and show us the app working. We care about your clarity of thought, not your presentation skills.
