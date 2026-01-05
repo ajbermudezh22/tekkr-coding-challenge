@@ -2,6 +2,8 @@ import React from "react";
 import {cn} from "../lib/utils";
 import Spinner from "./ui/spinner";
 import {BotIcon, UserIcon} from "lucide-react";
+import Markdown from "react-markdown";
+import { ProjectPlan, ProjectPlanPreview } from "./project-plan-preview";
 
 export type Message = { role: "user" | "assistant"; content: string };
 
@@ -37,4 +39,30 @@ export function AssistantLoadingIndicator() {
             </div>
         </MessageContainer>
     );
+}
+
+export function MessageContent({ content }: { content: string }) {
+  // Regex to find <project-plan>...</project-plan>
+  // using split to get parts.
+  const parts = content.split(/(<project-plan>[\s\S]*?<\/project-plan>)/g);
+
+  return (
+    <div className="prose prose-sm dark:prose-invert max-w-none w-full">
+      {parts.map((part, index) => {
+        if (part.startsWith("<project-plan>")) {
+          try {
+            const jsonStr = part.replace(/<\/?project-plan>/g, "");
+            const plan: ProjectPlan = JSON.parse(jsonStr);
+            return <ProjectPlanPreview key={index} plan={plan} />;
+          } catch (e) {
+            console.error(e);
+            return <div key={index} className="text-destructive text-xs p-2 border border-destructive rounded">Failed to parse project plan</div>;
+          }
+        }
+        // Render regular text as markdown
+        if (!part.trim()) return null;
+        return <Markdown key={index}>{part}</Markdown>;
+      })}
+    </div>
+  );
 }

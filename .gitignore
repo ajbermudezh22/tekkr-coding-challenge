@@ -1,2 +1,11 @@
 .idea/
 .DS_Store
+
+# Environment variables
+.env
+
+dist
+
+# Environment variables
+.env
+

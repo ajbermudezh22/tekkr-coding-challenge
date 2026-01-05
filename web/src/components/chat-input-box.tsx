@@ -3,13 +3,17 @@ import {Button} from "./ui/button";
 import {SendIcon} from "lucide-react";
 import {Textarea} from "./ui/textarea";
 
-export function ChatInputBox({onSend}: { onSend: (message: string) => void }) {
+export function ChatInputBox({onSend, disabled}: { onSend: (message: string) => void, disabled?: boolean }) {
   const [input, setInput] = useState("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = () => {
+    if (disabled || !input.trim()) return;
     onSend(input);
     setInput("");
+    if (textAreaRef.current) {
+        textAreaRef.current.style.height = "auto";
+    }
   };
 
   function resizeTextArea(e: HTMLTextAreaElement) {
@@ -23,12 +27,16 @@ export function ChatInputBox({onSend}: { onSend: (message: string) => void }) {
   };
 
   const onKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    if (e.key === "Enter") {
-      const modKey = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;
-      if (!modKey) {
-        e.preventDefault();
-        handleSend();
-      }
+    // Send on Cmd+Enter or Ctrl+Enter
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+      e.preventDefault();
+      handleSend();
+      return;
+    }
+    // Send on Enter without Shift
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   };
 
@@ -42,8 +50,9 @@ export function ChatInputBox({onSend}: { onSend: (message: string) => void }) {
               onChange={onTextChange}
               onKeyDown={onKeyDown}
               placeholder="Type your message..."
+              disabled={disabled}
           />
-          <Button onClick={handleSend} disabled={!input.trim()}>
+          <Button onClick={handleSend} disabled={disabled || !input.trim()}>
             <SendIcon className={"me-2 h-5 w-5"}/>
             Send
           </Button>

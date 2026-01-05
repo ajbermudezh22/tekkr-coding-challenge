@@ -3,6 +3,9 @@ import {testUsers} from "../domain/test-users";
 
 export default fp(async (fastify) => {
   fastify.addHook('preHandler', async (request, reply) => {
+    if (request.method === 'OPTIONS') {
+      return;
+    }
     const userId = request.headers.authorization;
     if (!userId || !(userId in testUsers)) {
       reply.status(401).send();
